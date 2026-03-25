@@ -239,7 +239,7 @@ This system depends on:
 # 🔧 Setup
 
 ```bash
-git clone https://github.com/yourusername/velozity-backend.git
+git clone https://github.com/ayaanansari-dev/velozity-backend.git
 cd velozity-backend
 
 chmod +x scripts/setup.sh
