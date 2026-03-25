@@ -1,0 +1,98 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  
+}
+
+model Tenant {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  users     User[]
+  apiKeys   ApiKey[]
+  auditLogs AuditLog[]
+  emailLogs EmailLog[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model User {
+  id        String    @id @default(cuid())
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  email     String
+  name      String
+  role      Role      @default(MEMBER)
+  apiKeys   ApiKey[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+}
+
+enum Role {
+  OWNER
+  MEMBER
+}
+
+model ApiKey {
+  id            String    @id @default(cuid())
+  tenantId      String
+  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  keyHash       String    @unique
+  keyPrefix     String
+  isActive      Boolean   @default(true)
+  expiresAt     DateTime?
+  lastUsedAt    DateTime?
+  rotatedFromId String?
+  rotatedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([tenantId])
+  @@index([keyPrefix])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  action        String
+  entityType    String
+  entityId      String
+  previousValue Json?
+  newValue      Json?
+  userId        String
+  apiKeyId      String
+  ipAddress     String
+  userAgent     String
+  previousHash  String?
+  chainHash     String   @unique
+  createdAt     DateTime @default(now())
+
+  @@index([tenantId, createdAt(sort: Desc)])
+  @@index([entityType, entityId])
+}
+
+model EmailLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  jobId     String
+  type      String
+  recipient String
+  status    String
+  error     String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([jobId])
+}
