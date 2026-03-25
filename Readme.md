@@ -1,4 +1,4 @@
-# 🚀 Velozity Backend — Multi-Tenant B2B SaaS API
+# 🚀 Multi-Tenant SaaS Backend
 
 A **production-grade backend system** designed for multi-tenant SaaS platforms, built with strong guarantees around **tenant isolation, rate limiting accuracy, audit integrity, and asynchronous processing**.
 
@@ -239,8 +239,8 @@ This system depends on:
 # 🔧 Setup
 
 ```bash
-git clone https://github.com/ayaanansari-dev/velozity-backend.git
-cd velozity-backend
+git clone https://github.com/ayaanansari-dev/multi-tenant-saas-backend.git
+cd multi-tenant-saas-backend
 
 chmod +x scripts/setup.sh
 ./scripts/setup.sh
